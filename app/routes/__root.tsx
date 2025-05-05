@@ -5,6 +5,7 @@ import {
   createRootRoute,
   HeadContent,
   Scripts,
+  Link,
 } from '@tanstack/react-router';
 import appCss from '../app.css?url';
 import popins100 from '@fontsource/poppins/100.css?url';
@@ -16,6 +17,7 @@ import popins600 from '@fontsource/poppins/600.css?url';
 import popins700 from '@fontsource/poppins/700.css?url';
 import popins800 from '@fontsource/poppins/800.css?url';
 import popins900 from '@fontsource/poppins/900.css?url';
+import { ChartColumnBigIcon } from 'lucide-react';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -91,7 +93,14 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
+
       <body>
+        <nav className="bg-primary p-4 h2-20 text-white flex items-center justify-between">
+          <Link to="/" className="flex gap-1 items-center font-bold text-2xl">
+            <ChartColumnBigIcon className="text-lime-500" /> TanTracker
+          </Link>
+        </nav>
+
         {children}
         <Scripts />
       </body>
