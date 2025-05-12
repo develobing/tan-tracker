@@ -1,13 +1,13 @@
 // app/routes/__root.tsx
-import type { ReactNode } from 'react';
+import { Button } from '@/components/ui/button';
 import {
-  Outlet,
-  createRootRoute,
-  HeadContent,
-  Scripts,
-  Link,
-} from '@tanstack/react-router';
-import appCss from '../app.css?url';
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from '@clerk/tanstack-react-start';
 import popins100 from '@fontsource/poppins/100.css?url';
 import popins200 from '@fontsource/poppins/200.css?url';
 import popins300 from '@fontsource/poppins/300.css?url';
@@ -17,18 +17,32 @@ import popins600 from '@fontsource/poppins/600.css?url';
 import popins700 from '@fontsource/poppins/700.css?url';
 import popins800 from '@fontsource/poppins/800.css?url';
 import popins900 from '@fontsource/poppins/900.css?url';
-import { ChartColumnBigIcon } from 'lucide-react';
 import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from '@clerk/tanstack-react-start';
-import { Button } from '@/components/ui/button';
+  createRootRoute,
+  HeadContent,
+  Link,
+  Outlet,
+  Scripts,
+  useNavigate,
+} from '@tanstack/react-router';
+import { ChartColumnBigIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
+import appCss from '../app.css?url';
+import { getSignedInUserId } from '../data/getSignedInUserId';
+import { Toaster } from 'sonner';
 
 export const Route = createRootRoute({
+  notFoundComponent: () => (
+    <div className="text-3xl text-center py-10 text-muted-foreground">
+      Opp! Page not found
+    </div>
+  ),
+  beforeLoad: async () => {
+    const userId = await getSignedInUserId();
+    return {
+      userId,
+    };
+  },
   head: () => ({
     meta: [
       {
@@ -97,6 +111,8 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+  const navigate = useNavigate();
+
   return (
     <ClerkProvider>
       <html>
@@ -133,12 +149,23 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
                       },
                     },
                   }}
-                />
+                >
+                  <UserButton.MenuItems>
+                    <UserButton.Action
+                      label="Dashboard"
+                      labelIcon={<ChartColumnBigIcon size={16} />}
+                      onClick={() => {
+                        navigate({ to: '/dashboard' });
+                      }}
+                    />
+                  </UserButton.MenuItems>
+                </UserButton>
               </SignedIn>
             </div>
           </nav>
 
           {children}
+          <Toaster />
           <Scripts />
         </body>
       </html>
