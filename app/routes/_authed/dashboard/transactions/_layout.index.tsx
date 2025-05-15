@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
+import { AllTransactions } from './-all-transactions';
+import { getTransactionYearRange } from '@/app/data/getTransactionYearsRange';
 
 const today = new Date();
 
@@ -23,8 +25,24 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   validateSearch: searchSchema,
+  loaderDeps: ({ search }) => {
+    const today = new Date();
+    return {
+      year: search.year ?? today.getFullYear(),
+      month: search.month ?? today.getMonth() + 1,
+    };
+  },
+  loader: async ({ deps }) => {
+    const yearsRange = await getTransactionYearRange();
+    return {
+      year: deps.year,
+      month: deps.month,
+      yearsRange,
+    };
+  },
 });
 
 function RouteComponent() {
-  return <div>Hello "/_authed/dashboard/transactions/"!</div>;
+  const { year, month, yearsRange } = Route.useLoaderData();
+  return <AllTransactions year={year} month={month} yearsRange={yearsRange} />;
 }
