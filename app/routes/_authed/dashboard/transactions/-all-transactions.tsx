@@ -10,12 +10,32 @@ import {
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import numeral from 'numeral';
+import { PencilIcon } from 'lucide-react';
 
 export function AllTransactions({
+  transactions,
   year,
   month,
   yearsRange,
 }: {
+  transactions: {
+    id: number;
+    description: string;
+    amount: string;
+    category: string | null;
+    transactionType: 'income' | 'expense' | null;
+    transactionDate: string;
+  }[];
   year: number;
   month: number;
   yearsRange: number[];
@@ -84,6 +104,63 @@ export function AllTransactions({
         <Button asChild>
           <Link to="/dashboard/transactions/new">New Transaction</Link>
         </Button>
+
+        {!transactions.length ? (
+          <p className="text-center py-10 text-lg text-muted-foreground">
+            There are no transactions for this month
+          </p>
+        ) : (
+          <Table className="mt-4">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {transactions.map((transaction) => (
+                <TableRow key={transaction.id}>
+                  <TableCell>
+                    {format(
+                      new Date(transaction.transactionDate),
+                      'do MMM yyyy'
+                    )}
+                  </TableCell>
+                  <TableCell>{transaction.description}</TableCell>
+                  <TableCell className="capitalize">
+                    <Badge
+                      className={
+                        transaction.transactionType === 'income'
+                          ? 'bg-lime-500'
+                          : 'bg-orange-500'
+                      }
+                    >
+                      {transaction.transactionType}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {numeral(transaction.amount).format('$ 0,0[.]00')}
+                  </TableCell>
+                  <TableCell>{transaction.category}</TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      aria-label="Edit transaction"
+                    >
+                      <PencilIcon />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );

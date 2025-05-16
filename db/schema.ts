@@ -8,7 +8,7 @@ export const categoriesTable = pgTable('categories', {
   }).notNull(),
 });
 
-export const transactionTable = pgTable('transactions', {
+export const transactionsTable = pgTable('transactions', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   userId: text('user_id').notNull(),
   description: text().notNull(),

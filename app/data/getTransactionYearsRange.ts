@@ -1,6 +1,6 @@
 import authMiddleware from '@/authMiddleware';
 import { db } from '@/db';
-import { transactionTable } from '@/db/schema';
+import { transactionsTable } from '@/db/schema';
 import { createServerFn } from '@tanstack/react-start';
 import { asc, eq } from 'drizzle-orm';
 
@@ -12,9 +12,9 @@ export const getTransactionYearRange = createServerFn({
     const today = new Date();
     const [earliestTransaction] = await db
       .select()
-      .from(transactionTable)
-      .where(eq(transactionTable.userId, context.userId))
-      .orderBy(asc(transactionTable.transactionDate))
+      .from(transactionsTable)
+      .where(eq(transactionsTable.userId, context.userId))
+      .orderBy(asc(transactionsTable.transactionDate))
       .limit(1);
 
     const currentYear = today.getFullYear();
