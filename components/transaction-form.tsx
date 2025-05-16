@@ -57,8 +57,9 @@ const TransactionForm = ({
     },
   });
 
+  const transactionType = form.watch('transactionType');
   const filteredCategories = categories.filter(
-    (cat) => cat.type === form.getValues('transactionType')
+    (cat) => cat.type === transactionType
   );
 
   return (
@@ -77,7 +78,10 @@ const TransactionForm = ({
                   <FormLabel>Transaction Type</FormLabel>
 
                   <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value.toString()}
+                      onValueChange={field.onChange}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Transaction type" />
                       </SelectTrigger>
