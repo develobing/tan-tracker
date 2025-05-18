@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,11 +40,19 @@ export const transactionFormSchema = z.object({
 });
 
 const TransactionForm = ({
+  defaultValues,
   categories,
   onSubmit,
 }: {
   categories: (typeof categoriesTable.$inferSelect)[];
   onSubmit: (data: z.infer<typeof transactionFormSchema>) => Promise<void>;
+  defaultValues?: {
+    transactionType: 'income' | 'expense';
+    categoryId: number;
+    amount: number;
+    description: string;
+    transactionDate: Date;
+  };
 }) => {
   const form = useForm<z.infer<typeof transactionFormSchema>>({
     resolver: zodResolver(transactionFormSchema),
@@ -54,6 +62,7 @@ const TransactionForm = ({
       amount: 0,
       description: '',
       transactionDate: new Date(),
+      ...defaultValues,
     },
   });
 
@@ -61,6 +70,16 @@ const TransactionForm = ({
   const filteredCategories = categories.filter(
     (cat) => cat.type === transactionType
   );
+
+  const setDefaultCategory = () => {
+    if (filteredCategories.length > 0) {
+      form.setValue('categoryId', filteredCategories[0].id);
+    }
+  };
+
+  useEffect(() => {
+    setDefaultCategory();
+  }, [transactionType, filteredCategories]);
 
   return (
     <Form {...form}>

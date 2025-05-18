@@ -37,7 +37,6 @@ function RouteComponent() {
       },
     });
 
-    console.log('[Robin] - handleSubmit - transaction:', transaction);
     toast('Transaction created successfully', {
       description: `Transaction ${transaction[0].description} created successfully`,
       duration: 2000,

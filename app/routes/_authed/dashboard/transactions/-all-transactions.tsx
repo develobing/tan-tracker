@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/select';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { Link } from '@tanstack/react-router';
 import {
   Table,
   TableBody,
@@ -21,6 +20,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import numeral from 'numeral';
 import { PencilIcon } from 'lucide-react';
+import { Link, useRouter } from '@tanstack/react-router';
 
 export function AllTransactions({
   transactions,
@@ -40,6 +40,7 @@ export function AllTransactions({
   month: number;
   yearsRange: number[];
 }) {
+  const router = useRouter();
   const [selectedYear, setSelectedYear] = useState(year);
   const [selectedMonth, setSelectedMonth] = useState(month);
   const selectedDate = new Date(year, month - 1, 1);
@@ -149,11 +150,26 @@ export function AllTransactions({
                   <TableCell>{transaction.category}</TableCell>
                   <TableCell className="text-right">
                     <Button
+                      asChild
                       variant="outline"
                       size="icon"
                       aria-label="Edit transaction"
                     >
-                      <PencilIcon />
+                      <Link
+                        to={`/dashboard/transactions/${transaction.id}`}
+                        onClick={() =>
+                          router.clearCache({
+                            filter: (route) => {
+                              return (
+                                route.pathname !==
+                                `/dashboard/transactions/${transaction.id}`
+                              );
+                            },
+                          })
+                        }
+                      >
+                        <PencilIcon />
+                      </Link>
                     </Button>
                   </TableCell>
                 </TableRow>

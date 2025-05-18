@@ -3,9 +3,11 @@ import { db } from '@/db';
 import { transactionsTable } from '@/db/schema';
 import { createServerFn } from '@tanstack/react-start';
 import { addDays } from 'date-fns';
+import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 const transactionSchema = z.object({
+  id: z.number(),
   transactionType: z.enum(['income', 'expense']),
   categoryId: z.coerce.number().positive('Please select a category'),
   amount: z.coerce.number().positive('Amount must be greater than 0'),
@@ -19,25 +21,26 @@ const transactionSchema = z.object({
   }),
 });
 
-export const createTransaction = createServerFn({
+export const updateTransaction = createServerFn({
   method: 'POST',
 })
   .middleware([authMiddleware])
   .validator((data: z.infer<typeof transactionSchema>) =>
     transactionSchema.parse(data)
   )
-  .handler(async ({ data, context }) => {
-    const userId = context.userId;
-    const transaction = await db
-      .insert(transactionsTable)
-      .values({
-        userId,
+  .handler(async ({ context, data }) => {
+    await db
+      .update(transactionsTable)
+      .set({
         amount: data.amount.toString(),
-        description: data.description,
         categoryId: data.categoryId,
+        description: data.description,
         transactionDate: data.transactionDate,
       })
-      .returning();
-
-    return transaction;
+      .where(
+        and(
+          eq(transactionsTable.id, data.id),
+          eq(transactionsTable.userId, context.userId)
+        )
+      );
   });
