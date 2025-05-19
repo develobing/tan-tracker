@@ -32,6 +32,13 @@ import { getSignedInUserId } from '../data/getSignedInUserId';
 import { Toaster } from 'sonner';
 
 export const Route = createRootRoute({
+  pendingMs: 0,
+  pendingComponent: () => (
+    <div className="absolute top-0 left-0 size-full flex items-center justify-center z-1">
+      <div className="absolute top-0 left-0 size-full bg-white dark:bg-slate-900 opacity-50"></div>
+      <div className="text-3xl text-center z-10">Loading...</div>
+    </div>
+  ),
   notFoundComponent: () => (
     <div className="text-3xl text-center py-10 text-muted-foreground">
       Opp! Page not found

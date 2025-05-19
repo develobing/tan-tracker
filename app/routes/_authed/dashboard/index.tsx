@@ -1,10 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { RecentTransactions } from './-recent-transcation';
-import { getRecentTransactions } from '@/app/data/getRecentTransactions';
 import { getAnnualCashflow } from '@/app/data/getAnnualCashflow';
+import { getRecentTransactions } from '@/app/data/getRecentTransactions';
 import { getTransactionYearRange } from '@/app/data/getTransactionYearsRange';
-import { Cashflow } from './-cashflow';
+import LoadingSkeleton from '@/components/loading-skeleton';
+import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
+import { Cashflow } from './-cashflow';
+import { RecentTransactions } from './-recent-transcation';
 
 const today = new Date();
 const searchSchema = z.object({
@@ -17,6 +18,12 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute('/_authed/dashboard/')({
+  pendingComponent: () => (
+    <div className="max-w-screen-xl mx-auto py-5">
+      <h1 className="text-4xl font-semibold pb-5">Dashboard</h1>
+      <LoadingSkeleton />
+    </div>
+  ),
   validateSearch: searchSchema,
   beforeLoad: ({ context }) => {
     context.userId;
