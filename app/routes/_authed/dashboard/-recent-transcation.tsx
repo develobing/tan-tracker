@@ -84,10 +84,10 @@ export function RecentTransactions({
                       {transaction.transactionType}
                     </Badge>
                   </TableCell>
+                  <TableCell>{transaction.category}</TableCell>
                   <TableCell>
                     {numeral(transaction.amount).format('$ 0,0[.]00')}
                   </TableCell>
-                  <TableCell>{transaction.category}</TableCell>
 
                   <TableCell className="text-right">
                     <Button
